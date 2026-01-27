@@ -77,12 +77,13 @@
 </div>
 
 <audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
+<audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
 
 <script>
     let isDark = false;
 
     function toggleLight() {
-        const audio = document.getElementById('fireSound');
+        const fireAudio = document.getElementById('fireSound');
         const body = document.getElementById('mainBody');
         const headline = document.getElementById('headline');
         const cheeseSection = document.getElementById('cheese-section');
@@ -93,7 +94,7 @@
         if (!isDark) {
             // ТУШИМ
             isDark = true;
-            if(audio) audio.pause();
+            fireAudio.pause(); // Звук костра затихает
             body.classList.add('dark-mode');
             headline.innerText = "Добро пожаловать в ТЕМНОТУ 🌑";
             fire.style.opacity = "0.1"; 
@@ -104,7 +105,7 @@
         } else {
             // ЗАЖИГАЕМ
             isDark = false;
-            if(audio) audio.play();
+            fireAudio.play(); // Звук костра включается
             body.classList.remove('dark-mode');
             headline.innerText = "Добро пожаловать в нору";
             fire.style.opacity = "1";
@@ -116,10 +117,17 @@
     }
 
     function handleBtnClick() {
+        const eatAudio = document.getElementById('eatSound');
+        const fireAudio = document.getElementById('fireSound');
+
         if (isDark) {
-            toggleLight(); // Если темно, кнопка разжигает костер
+            // Если темно, кнопка разжигает костер и включает звук огня
+            toggleLight();
         } else {
-            // Если светло, просто едим сыр
+            // Если светло, едим сыр со звуком!
+            eatAudio.currentTime = 0; // Сбрасываем звук на начало, чтобы можно было кликать часто
+            eatAudio.play();
+            
             document.getElementById('status').innerText = "Ммм, дырявый и вкусный! 🧀";
             setTimeout(() => {
                 document.getElementById('status').innerText = "Здесь всегда тепло и есть сыр.";
