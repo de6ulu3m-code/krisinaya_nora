@@ -5,113 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Уютная нора</title>
     <style>
+        :root {
+            --bg-color: #1a120b;
+            --text-color: #f3e5ab;
+            --container-bg: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
+            --fire-glow: drop-shadow(0 0 25px orange);
+        }
+
+        body.dark-mode {
+            --bg-color: #050505;
+            --text-color: #333;
+            --container-bg: #000;
+            --fire-glow: none;
+        }
+
         body {
-            background-color: #1a120b;
-            color: #f3e5ab;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Segoe UI', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; transition: 1.2s;
         }
 
         .nora-container {
-            background: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
-            padding: 40px;
+            background: var(--container-bg);
+            padding: 40px; text-align: center;
             border-radius: 50% 50% 30% 30%;
-            border: 2px solid #4a3728;
-            text-align: center;
-            box-shadow: 0 0 100px rgba(0,0,0,0.9), inset 0 0 50px rgba(255,140,0,0.1);
-            max-width: 85%;
-            z-index: 2;
+            border: 2px solid #222;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            max-width: 85%; transition: 1.2s;
         }
 
-        h1 { font-size: 1.5rem; text-shadow: 2px 2px 10px #000; }
-
-        .cheese {
-            font-size: 60px;
-            cursor: pointer;
+        .fire-icon {
+            font-size: 80px;
             display: inline-block;
-            transition: transform 0.3s;
-            filter: drop-shadow(0 0 15px #ffcc00);
+            filter: var(--fire-glow);
+            transition: 1s;
             user-select: none;
+            cursor: pointer; /* Делаем иконку кликабельной */
         }
 
-        .cheese:active { transform: scale(0.8); }
+        .fire-icon:hover { transform: scale(1.1); }
 
-        .btn-feed {
-            background: #8b4513;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 4px 0 #5d2e0d;
-        }
-
-        .btn-feed:active { transform: translateY(3px); box-shadow: none; }
-
-        /* Искры костра */
-        .spark {
-            position: absolute;
-            width: 3px; height: 3px;
-            background: #ffcc00;
-            border-radius: 50%;
-            bottom: 10%;
-            animation: fly 3s infinite linear;
-            opacity: 0;
-        }
-
-        @keyframes fly {
-            0% { transform: translateY(0) translateX(0); opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        .hidden { display: none !important; }
+        
+        .btn-action {
+            background: #8b4513; color: #fff; border: none;
+            padding: 15px 30px; border-radius: 30px;
+            font-size: 1.1rem; cursor: pointer; margin-top: 25px;
+            transition: 0.3s;
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div class="nora-container">
-    <h1>Добро пожаловать в нору</h1>
-    <div class="cheese" id="cheeseBtn">🧀</div>
-    <p id="status">Здесь всегда тепло и есть сыр.</p>
-    <button class="btn-feed" onclick="startNora()">Угоститься сыром</button>
-    <a href="https://de6ulu3m-code.github.io/ratpage" style="display: block; margin-top: 20px; color: #8b4513; text-decoration: none; font-size: 0.9rem;">
-    ← Выйти на поверхность
+    <h1 id="headline">Добро пожаловать в нору</h1>
+    
+    <div class="fire-icon" id="fireIcon" onclick="toggleLight()">🔥</div>
+
+    <div id="cheese-section">
+        <div style="font-size: 60px; margin: 15px;">🧀</div>
+        <p id="status">Здесь всегда тепло и есть сыр.</p>
+    </div>
+
+    <button class="btn-action" id="mainBtn" onclick="handleBtnClick()">Угоститься сыром</button>
+
+    <a href="https://de6ulu3m-code.github.io/ratpage/" id="exitLink" style="display: block; margin-top: 25px; color: #8b4513; text-decoration: none; font-size: 0.9rem;">
+        ← Выйти на поверхность
     </a>
 </div>
 
-<audio id="fireSound" loop>
-    <source src="fire.mp3" type="audio/mpeg">
-</audio>
+<audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
 
 <script>
-    function startNora() {
-        // Запуск звука
-        const audio = document.getElementById('fireSound');
-        audio.play();
+    let isDark = false;
 
-        // Меняем текст
-        document.getElementById('status').innerText = "Ммм, вкусно! Послышался треск камина...";
-        
-        // Создаем искры
-        for (let i = 0; i < 15; i++) {
-            setTimeout(createSpark, i * 200);
+    function toggleLight() {
+        const audio = document.getElementById('fireSound');
+        const body = document.getElementById('mainBody');
+        const headline = document.getElementById('headline');
+        const cheeseSection = document.getElementById('cheese-section');
+        const exitLink = document.getElementById('exitLink');
+        const btn = document.getElementById('mainBtn');
+        const fire = document.getElementById('fireIcon');
+
+        if (!isDark) {
+            // ТУШИМ
+            isDark = true;
+            if(audio) audio.pause();
+            body.classList.add('dark-mode');
+            headline.innerText = "Добро пожаловать в ТЕМНОТУ 🌑";
+            fire.style.opacity = "0.1"; 
+            fire.innerText = "💨"; 
+            cheeseSection.classList.add('hidden');
+            exitLink.classList.add('hidden');
+            btn.innerText = "Разжечь костёр снова";
+        } else {
+            // ЗАЖИГАЕМ
+            isDark = false;
+            if(audio) audio.play();
+            body.classList.remove('dark-mode');
+            headline.innerText = "Добро пожаловать в нору";
+            fire.style.opacity = "1";
+            fire.innerText = "🔥";
+            cheeseSection.classList.remove('hidden');
+            exitLink.classList.remove('hidden');
+            btn.innerText = "Угоститься сыром";
         }
     }
 
-    function createSpark() {
-        const spark = document.createElement('div');
-        spark.className = 'spark';
-        spark.style.left = Math.random() * 100 + 'vw';
-        spark.style.animationDuration = (Math.random() * 2 + 1) + 's';
-        document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 3000);
+    function handleBtnClick() {
+        if (isDark) {
+            toggleLight(); // Если темно, кнопка разжигает костер
+        } else {
+            // Если светло, просто едим сыр
+            document.getElementById('status').innerText = "Ммм, дырявый и вкусный! 🧀";
+            setTimeout(() => {
+                document.getElementById('status').innerText = "Здесь всегда тепло и есть сыр.";
+            }, 3000);
+        }
     }
 </script>
-
 </body>
 </html>
