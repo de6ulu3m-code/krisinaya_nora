@@ -8,132 +8,132 @@
         :root {
             --bg-color: #1a120b;
             --text-color: #f3e5ab;
-            --container-bg: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
-            --fire-glow: drop-shadow(0 0 25px orange);
-        }
-
-        body.dark-mode {
-            --bg-color: #050505;
-            --text-color: #333;
-            --container-bg: #000;
-            --fire-glow: none;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Segoe UI', serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0; transition: 1.2s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; transition: 0.5s;
         }
+
+        /* Меню выбора комнат */
+        .nav-menu {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
+        }
+
+        .nav-btn {
+            background: #4a3728; color: #f3e5ab; border: 1px solid #8b4513;
+            padding: 8px 15px; border-radius: 10px; cursor: pointer;
+        }
+
+        .nav-btn:hover { background: #8b4513; }
 
         .nora-container {
-            background: var(--container-bg);
-            padding: 40px; text-align: center;
-            border-radius: 50% 50% 30% 30%;
-            border: 2px solid #222;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
-            max-width: 85%; transition: 1.2s;
+            background: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
+            padding: 30px; text-align: center;
+            border-radius: 40px; border: 2px solid #4a3728;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            max-width: 300px; width: 90%;
         }
 
-        .fire-icon {
-            font-size: 80px;
-            display: inline-block;
-            filter: var(--fire-glow);
-            transition: 1s;
-            user-select: none;
-            cursor: pointer; /* Делаем иконку кликабельной */
-        }
+        .room-icon { font-size: 70px; margin: 10px 0; display: block; }
+        .rat-resident { font-size: 40px; margin-top: -30px; margin-left: 40px; }
 
-        .fire-icon:hover { transform: scale(1.1); }
-
-        .hidden { display: none !important; }
-        
         .btn-action {
             background: #8b4513; color: #fff; border: none;
-            padding: 15px 30px; border-radius: 30px;
-            font-size: 1.1rem; cursor: pointer; margin-top: 25px;
-            transition: 0.3s;
+            padding: 12px 20px; border-radius: 20px;
+            font-size: 1rem; cursor: pointer; margin-top: 15px;
         }
+
+        .hidden { display: none; }
     </style>
 </head>
-<body id="mainBody">
+<body>
 
-<div class="nora-container">
-    <h1 id="headline">Добро пожаловать в нору</h1>
-    
-    <div class="fire-icon" id="fireIcon" onclick="toggleLight()">🔥</div>
-
-    <div id="cheese-section">
-        <div style="font-size: 60px; margin: 15px;">🧀</div>
-        <p id="status">Здесь всегда тепло и есть сыр.</p>
-    </div>
-
-    <button class="btn-action" id="mainBtn" onclick="handleBtnClick()">Угоститься сыром</button>
-
-    <a href="https://de6ulu3m-code.github.io/ratpage/" id="exitLink" style="display: block; margin-top: 25px; color: #8b4513; text-decoration: none; font-size: 0.9rem;">
-        ← Выйти на поверхность
-    </a>
+<div class="nav-menu">
+    <button class="nav-btn" onclick="changeRoom('living')">Гостиная</button>
+    <button class="nav-btn" onclick="changeRoom('kitchen')">Кухня</button>
+    <button class="nav-btn" onclick="changeRoom('bedroom')">Спальня</button>
 </div>
+
+<div class="nora-container" id="roomContainer">
+    <h1 id="roomTitle">Гостиная</h1>
+    
+    <div class="room-icon" id="roomIcon">🔥</div>
+    <div class="rat-resident" id="ratIcon">🐀</div>
+
+    <p id="roomDesc">Здесь горит костер и отдыхает старый крыс.</p>
+
+    <button class="btn-action" id="actionBtn" onclick="doAction()">Погреться</button>
+</div>
+
+<a href="https://de6ulu3m-code.github.io/ratpage/" style="margin-top: 20px; color: #8b4513; text-decoration: none; font-size: 0.8rem;">← На поверхность</a>
 
 <audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
 <audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
 
 <script>
-    let isDark = false;
-
-    function toggleLight() {
-        const fireAudio = document.getElementById('fireSound');
-        const body = document.getElementById('mainBody');
-        const headline = document.getElementById('headline');
-        const cheeseSection = document.getElementById('cheese-section');
-        const exitLink = document.getElementById('exitLink');
-        const btn = document.getElementById('mainBtn');
-        const fire = document.getElementById('fireIcon');
-
-        if (!isDark) {
-            // ТУШИМ
-            isDark = true;
-            fireAudio.pause(); // Звук костра затихает
-            body.classList.add('dark-mode');
-            headline.innerText = "Добро пожаловать в ТЕМНОТУ 🌑";
-            fire.style.opacity = "0.1"; 
-            fire.innerText = "💨"; 
-            cheeseSection.classList.add('hidden');
-            exitLink.classList.add('hidden');
-            btn.innerText = "Разжечь костёр снова";
-        } else {
-            // ЗАЖИГАЕМ
-            isDark = false;
-            fireAudio.play(); // Звук костра включается
-            body.classList.remove('dark-mode');
-            headline.innerText = "Добро пожаловать в нору";
-            fire.style.opacity = "1";
-            fire.innerText = "🔥";
-            cheeseSection.classList.remove('hidden');
-            exitLink.classList.remove('hidden');
-            btn.innerText = "Угоститься сыром";
+    // База данных комнат
+    const rooms = {
+        living: {
+            title: "Гостиная",
+            icon: "🔥",
+            rat: "🐀",
+            desc: "Здесь горит костер и отдыхает старый крыс.",
+            actionText: "Погреться",
+            sound: "fire"
+        },
+        kitchen: {
+            title: "Кухня",
+            icon: "🍳",
+            rat: "🐁",
+            desc: "Пахнет сыром! Повар нарезает угощение.",
+            actionText: "Угоститься сыром",
+            sound: "eat"
+        },
+        bedroom: {
+            title: "Спальня",
+            icon: "💤",
+            rat: "💤🐀",
+            desc: "Тихо... Кто-то сладко сопит в гамаке.",
+            actionText: "Укрыть крысу",
+            sound: "none"
         }
+    };
+
+    let currentRoom = 'living';
+
+    function changeRoom(roomId) {
+        currentRoom = roomId;
+        const data = rooms[roomId];
+        
+        // Обновляем текст и иконки
+        document.getElementById('roomTitle').innerText = data.title;
+        document.getElementById('roomIcon').innerText = data.icon;
+        document.getElementById('ratIcon').innerText = data.rat;
+        document.getElementById('roomDesc').innerText = data.desc;
+        document.getElementById('actionBtn').innerText = data.actionText;
+
+        // Управление звуком костра
+        const fire = document.getElementById('fireSound');
+        if (roomId === 'living') { fire.play(); } else { fire.pause(); }
     }
 
-    function handleBtnClick() {
-        const eatAudio = document.getElementById('eatSound');
-        const fireAudio = document.getElementById('fireSound');
-
-        if (isDark) {
-            // Если темно, кнопка разжигает костер и включает звук огня
-            toggleLight();
-        } else {
-            // Если светло, едим сыр со звуком!
-            eatAudio.currentTime = 0; // Сбрасываем звук на начало, чтобы можно было кликать часто
-            eatAudio.play();
-            
-            document.getElementById('status').innerText = "Ммм, дырявый и вкусный! 🧀";
-            setTimeout(() => {
-                document.getElementById('status').innerText = "Здесь всегда тепло и есть сыр.";
-            }, 3000);
+    function doAction() {
+        if (currentRoom === 'kitchen') {
+            const eat = document.getElementById('eatSound');
+            eat.currentTime = 0;
+            eat.play();
+            alert("Хрум-хрум! Очень вкусно!");
+        } else if (currentRoom === 'living') {
+            alert("Вы протянули лапки к огню. Тепло...");
+        } else if (currentRoom === 'bedroom') {
+            alert("Вы поправили одеялко. Крыса довольно пискнула во сне.");
         }
     }
 </script>
+
 </body>
 </html>
