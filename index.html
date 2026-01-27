@@ -5,48 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Уютная нора</title>
     <style>
-        :root {
-            --bg-color: #1a120b;
-            --text-color: #f3e5ab;
-        }
-
+        :root { --bg-color: #1a120b; --text-color: #f3e5ab; }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', serif;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0; transition: 0.5s;
+            background-color: var(--bg-color); color: var(--text-color);
+            font-family: 'Segoe UI', serif; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; min-height: 100vh; margin: 0; transition: 0.5s;
         }
-
-        .nav-menu {
-            display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
-        }
-
+        .nav-menu { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
         .nav-btn {
             background: #4a3728; color: #f3e5ab; border: 1px solid #8b4513;
-            padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
+            padding: 8px 12px; border-radius: 10px; cursor: pointer;
         }
-
-        .nav-btn:hover { background: #8b4513; }
-
         .nora-container {
             background: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
-            padding: 30px; text-align: center;
-            border-radius: 40px; border: 2px solid #4a3728;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            max-width: 300px; width: 90%;
+            padding: 30px; text-align: center; border-radius: 40px;
+            border: 2px solid #4a3728; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            max-width: 320px; width: 90%; position: relative;
         }
-
+        .rat-name { font-weight: bold; color: #ffcc00; margin-bottom: 5px; font-size: 1.2rem; }
         .room-icon { font-size: 70px; margin: 10px 0; display: block; }
-        .rat-resident { font-size: 40px; margin-top: -30px; margin-left: 40px; }
-
+        .rat-resident { font-size: 45px; margin-top: -35px; margin-left: 50px; transition: 0.3s; }
         .btn-action {
             background: #8b4513; color: #fff; border: none;
-            padding: 12px 20px; border-radius: 20px;
-            font-size: 1rem; cursor: pointer; margin-top: 15px;
+            padding: 12px 20px; border-radius: 20px; cursor: pointer; margin-top: 15px; width: 100%;
         }
-
-        #stock-display { font-weight: bold; color: #ffcc00; font-size: 1.2rem; }
+        .upgrade-item {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;
+            margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .bought { color: #00ff00; font-weight: bold; }
+        #stock-display { color: #ffcc00; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -55,108 +43,104 @@
     <button class="nav-btn" onclick="changeRoom('living')">Гостиная</button>
     <button class="nav-btn" onclick="changeRoom('kitchen')">Кухня</button>
     <button class="nav-btn" onclick="changeRoom('bedroom')">Спальня</button>
-    <button class="nav-btn" onclick="changeRoom('storage')">📦 Кладовка</button>
+    <button class="nav-btn" onclick="changeRoom('shop')">💰 Лавка</button>
 </div>
 
 <div class="nora-container" id="roomContainer">
-    <h1 id="roomTitle">Гостиная</h1>
+    <div id="stock-display">Сыр: <span id="cheese-count">0</span> 🧀</div>
+    <div id="rat-name" class="rat-name">Дядюшка Писк</div>
     
     <div class="room-icon" id="roomIcon">🔥</div>
     <div class="rat-resident" id="ratIcon">🐀</div>
 
-    <p id="roomDesc">Здесь горит костер и отдыхает старый крыс.</p>
+    <p id="roomDesc">Здесь тепло и пахнет деревом.</p>
 
-    <div id="storageInfo" class="hidden" style="margin-bottom: 15px;">
-        Запасы: <span id="stock-count">0</span> 🧀
+    <div id="shop-items" style="display: none; text-align: left;">
+        <div class="upgrade-item">
+            <span>🛋️ Ковер (10🧀)</span>
+            <button id="buy-rug" onclick="buy('rug', 10)">Купить</button>
+        </div>
+        <div class="upgrade-item">
+            <span>👨‍🍳 Колпак (20🧀)</span>
+            <button id="buy-hat" onclick="buy('hat', 20)">Купить</button>
+        </div>
+        <div class="upgrade-item">
+            <span>☁️ Подушка (30🧀)</span>
+            <button id="buy-pillow" onclick="buy('pillow', 30)">Купить</button>
+        </div>
     </div>
 
     <button class="btn-action" id="actionBtn" onclick="doAction()">Погреться</button>
 </div>
 
-<a href="https://de6ulu3m-code.github.io/ratpage/" style="margin-top: 20px; color: #8b4513; text-decoration: none; font-size: 0.8rem;">← На поверхность</a>
+<a href="https://de6ulu3m-code.github.io/ratpage/" style="margin-top: 20px; color: #8b4513; text-decoration: none;">← На поверхность</a>
 
 <audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
 <audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
 
 <script>
-    // Наш счетчик сыра
-    let cheeseStock = 0;
+    let cheese = 0;
+    let inventory = { rug: false, hat: false, pillow: false };
 
     const rooms = {
-        living: {
-            title: "Гостиная",
-            icon: "🔥",
-            rat: "🐀",
-            desc: "Здесь горит костер и отдыхает старый крыс.",
-            actionText: "Погреться"
-        },
-        kitchen: {
-            title: "Кухня",
-            icon: "🍳",
-            rat: "🐁",
-            desc: "Крыса-повар готовит запасы. Нажми, чтобы собрать сыр!",
-            actionText: "Взять кусочек сыра 🧀"
-        },
-        bedroom: {
-            title: "Спальня",
-            icon: "💤",
-            rat: "💤🐀",
-            desc: "Тихо... Кто-то сладко сопит в гамаке.",
-            actionText: "Укрыть крысу"
-        },
-        storage: {
-            title: "Кладовка",
-            icon: "📦",
-            rat: "🐀",
-            desc: "Твои личные запасы на зиму. Впечатляет!",
-            actionText: "Посчитать заново"
-        }
+        living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Греет лапки у огня.", btn: "Послушать совет" },
+        kitchen: { name: "Шеф Реми", icon: "🍳", rat: "🐁", desc: "Готовит лучший сыр в округе!", btn: "Взять сыр 🧀" },
+        bedroom: { name: "Малыш Соня", icon: "💤", rat: "💤🐀", desc: "Видит сны о гигантской головке сыра.", btn: "Поправить одеяло" },
+        shop: { name: "Торговец Хвост", icon: "💰", rat: "🐹", desc: "Меняю уют на сыр!", btn: "Посмотреть товары" }
     };
 
     let currentRoom = 'living';
 
-    function changeRoom(roomId) {
-        currentRoom = roomId;
-        const data = rooms[roomId];
+    function changeRoom(id) {
+        currentRoom = id;
+        const r = rooms[id];
+        document.getElementById('rat-name').innerText = r.name;
+        document.getElementById('roomIcon').innerText = (id === 'living' && inventory.rug) ? "🛋️🔥" : r.icon;
+        document.getElementById('ratIcon').innerText = (id === 'kitchen' && inventory.hat) ? "👨‍🍳🐁" : r.rat;
+        document.getElementById('roomDesc').innerText = r.desc;
+        document.getElementById('actionBtn').innerText = r.btn;
         
-        document.getElementById('roomTitle').innerText = data.title;
-        document.getElementById('roomIcon').innerText = data.icon;
-        document.getElementById('ratIcon').innerText = data.rat;
-        document.getElementById('roomDesc').innerText = data.desc;
-        document.getElementById('actionBtn').innerText = data.actionText;
+        // Показываем/скрываем магазин
+        document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
+        document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
 
-        // Показываем счетчик сыра только в Кладовке и на Кухне
-        const info = document.getElementById('storageInfo');
-        if (roomId === 'storage' || roomId === 'kitchen') {
-            info.style.display = "block";
-            document.getElementById('stock-count').innerText = cheeseStock;
-        } else {
-            info.style.display = "none";
+        if(id === 'bedroom' && inventory.pillow) {
+            document.getElementById('roomIcon').innerText = "☁️💤";
+            document.getElementById('roomDesc').innerText = "Теперь Соня спит на мягкой подушке!";
         }
 
         const fire = document.getElementById('fireSound');
-        if (roomId === 'living') { fire.play().catch(e => {}); } else { fire.pause(); }
+        (id === 'living') ? fire.play().catch(e=>{}) : fire.pause();
     }
 
     function doAction() {
         if (currentRoom === 'kitchen') {
-            cheeseStock++; // Добавляем сыр
-            document.getElementById('stock-count').innerText = cheeseStock;
-            
-            const eat = document.getElementById('eatSound');
-            eat.currentTime = 0;
-            eat.play().catch(e => {});
-            
-            document.getElementById('roomDesc').innerText = "Ты добыл кусочек! Теперь у нас " + cheeseStock + ".";
+            cheese++;
+            document.getElementById('cheese-count').innerText = cheese;
+            document.getElementById('eatSound').play().catch(e=>{});
         } else if (currentRoom === 'living') {
-            alert("Тепло разливается по телу...");
+            const tips = ["Всегда держи хвост пистолетом!", "Сыр вкуснее, когда им делишься.", "Береги костер, и он согреет тебя."];
+            alert(rooms.living.name + ": " + tips[Math.floor(Math.random()*tips.length)]);
         } else if (currentRoom === 'bedroom') {
-            alert("Тс-с-с, пусть спит.");
-        } else if (currentRoom === 'storage') {
-            alert("Ты пересчитал все запасы. Итого: " + cheeseStock + " 🧀");
+            alert("Крыса довольно пискнула.");
+        }
+    }
+
+    function buy(item, price) {
+        if (cheese >= price && !inventory[item]) {
+            cheese -= price;
+            inventory[item] = true;
+            document.getElementById('cheese-count').innerText = cheese;
+            const btn = document.getElementById('buy-' + (item === 'rug' ? 'rug' : item === 'hat' ? 'hat' : 'pillow'));
+            btn.innerText = "Куплено";
+            btn.disabled = true;
+            alert("Поздравляю с покупкой!");
+        } else if (inventory[item]) {
+            alert("У тебя уже это есть!");
+        } else {
+            alert("Не хватает сыра! Иди на кухню.");
         }
     }
 </script>
-
 </body>
 </html>
