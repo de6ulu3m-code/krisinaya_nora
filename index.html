@@ -18,14 +18,13 @@
             min-height: 100vh; margin: 0; transition: 0.5s;
         }
 
-        /* Меню выбора комнат */
         .nav-menu {
-            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
+            display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
         }
 
         .nav-btn {
             background: #4a3728; color: #f3e5ab; border: 1px solid #8b4513;
-            padding: 8px 15px; border-radius: 10px; cursor: pointer;
+            padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
         }
 
         .nav-btn:hover { background: #8b4513; }
@@ -47,7 +46,7 @@
             font-size: 1rem; cursor: pointer; margin-top: 15px;
         }
 
-        .hidden { display: none; }
+        #stock-display { font-weight: bold; color: #ffcc00; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -56,6 +55,7 @@
     <button class="nav-btn" onclick="changeRoom('living')">Гостиная</button>
     <button class="nav-btn" onclick="changeRoom('kitchen')">Кухня</button>
     <button class="nav-btn" onclick="changeRoom('bedroom')">Спальня</button>
+    <button class="nav-btn" onclick="changeRoom('storage')">📦 Кладовка</button>
 </div>
 
 <div class="nora-container" id="roomContainer">
@@ -66,6 +66,10 @@
 
     <p id="roomDesc">Здесь горит костер и отдыхает старый крыс.</p>
 
+    <div id="storageInfo" class="hidden" style="margin-bottom: 15px;">
+        Запасы: <span id="stock-count">0</span> 🧀
+    </div>
+
     <button class="btn-action" id="actionBtn" onclick="doAction()">Погреться</button>
 </div>
 
@@ -75,31 +79,37 @@
 <audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
 
 <script>
-    // База данных комнат
+    // Наш счетчик сыра
+    let cheeseStock = 0;
+
     const rooms = {
         living: {
             title: "Гостиная",
             icon: "🔥",
             rat: "🐀",
             desc: "Здесь горит костер и отдыхает старый крыс.",
-            actionText: "Погреться",
-            sound: "fire"
+            actionText: "Погреться"
         },
         kitchen: {
             title: "Кухня",
             icon: "🍳",
             rat: "🐁",
-            desc: "Пахнет сыром! Повар нарезает угощение.",
-            actionText: "Угоститься сыром",
-            sound: "eat"
+            desc: "Крыса-повар готовит запасы. Нажми, чтобы собрать сыр!",
+            actionText: "Взять кусочек сыра 🧀"
         },
         bedroom: {
             title: "Спальня",
             icon: "💤",
             rat: "💤🐀",
             desc: "Тихо... Кто-то сладко сопит в гамаке.",
-            actionText: "Укрыть крысу",
-            sound: "none"
+            actionText: "Укрыть крысу"
+        },
+        storage: {
+            title: "Кладовка",
+            icon: "📦",
+            rat: "🐀",
+            desc: "Твои личные запасы на зиму. Впечатляет!",
+            actionText: "Посчитать заново"
         }
     };
 
@@ -109,28 +119,41 @@
         currentRoom = roomId;
         const data = rooms[roomId];
         
-        // Обновляем текст и иконки
         document.getElementById('roomTitle').innerText = data.title;
         document.getElementById('roomIcon').innerText = data.icon;
         document.getElementById('ratIcon').innerText = data.rat;
         document.getElementById('roomDesc').innerText = data.desc;
         document.getElementById('actionBtn').innerText = data.actionText;
 
-        // Управление звуком костра
+        // Показываем счетчик сыра только в Кладовке и на Кухне
+        const info = document.getElementById('storageInfo');
+        if (roomId === 'storage' || roomId === 'kitchen') {
+            info.style.display = "block";
+            document.getElementById('stock-count').innerText = cheeseStock;
+        } else {
+            info.style.display = "none";
+        }
+
         const fire = document.getElementById('fireSound');
-        if (roomId === 'living') { fire.play(); } else { fire.pause(); }
+        if (roomId === 'living') { fire.play().catch(e => {}); } else { fire.pause(); }
     }
 
     function doAction() {
         if (currentRoom === 'kitchen') {
+            cheeseStock++; // Добавляем сыр
+            document.getElementById('stock-count').innerText = cheeseStock;
+            
             const eat = document.getElementById('eatSound');
             eat.currentTime = 0;
-            eat.play();
-            alert("Хрум-хрум! Очень вкусно!");
+            eat.play().catch(e => {});
+            
+            document.getElementById('roomDesc').innerText = "Ты добыл кусочек! Теперь у нас " + cheeseStock + ".";
         } else if (currentRoom === 'living') {
-            alert("Вы протянули лапки к огню. Тепло...");
+            alert("Тепло разливается по телу...");
         } else if (currentRoom === 'bedroom') {
-            alert("Вы поправили одеялко. Крыса довольно пискнула во сне.");
+            alert("Тс-с-с, пусть спит.");
+        } else if (currentRoom === 'storage') {
+            alert("Ты пересчитал все запасы. Итого: " + cheeseStock + " 🧀");
         }
     }
 </script>
