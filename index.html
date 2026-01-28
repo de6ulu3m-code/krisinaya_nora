@@ -33,7 +33,6 @@
             background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;
             margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
         }
-        .bought { color: #00ff00; font-weight: bold; }
         #stock-display { color: #ffcc00; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
 </head>
@@ -57,8 +56,8 @@
 
     <div id="shop-items" style="display: none; text-align: left;">
         <div class="upgrade-item">
-            <span>🛋️ Ковер (10🧀)</span>
-            <button id="buy-rug" onclick="buy('rug', 10)">Купить</button>
+            <span>🛋️ Диван (10🧀)</span>
+            <button id="buy-sofa" onclick="buy('sofa', 10)">Купить</button>
         </div>
         <div class="upgrade-item">
             <span>👨‍🍳 Колпак (20🧀)</span>
@@ -80,7 +79,7 @@
 
 <script>
     let cheese = 0;
-    let inventory = { rug: false, hat: false, pillow: false };
+    let inventory = { sofa: false, hat: false, pillow: false };
 
     const rooms = {
         living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Греет лапки у огня.", btn: "Послушать совет" },
@@ -95,19 +94,44 @@
         currentRoom = id;
         const r = rooms[id];
         document.getElementById('rat-name').innerText = r.name;
-        document.getElementById('roomIcon').innerText = (id === 'living' && inventory.rug) ? "🛋️🔥" : r.icon;
-        document.getElementById('ratIcon').innerText = (id === 'kitchen' && inventory.hat) ? "👨‍🍳🐁" : r.rat;
-        document.getElementById('roomDesc').innerText = r.desc;
-        document.getElementById('actionBtn').innerText = r.btn;
         
-        // Показываем/скрываем магазин
-        document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
-        document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
+        // Логика Дивана в Гостиной
+        if (id === 'living') {
+            if (inventory.sofa) {
+                document.getElementById('roomIcon').innerText = "🛋️";
+                document.getElementById('ratIcon').innerText = "🐀";
+                document.getElementById('ratIcon').style.marginLeft = "0px"; // Сажаем на диван
+                document.getElementById('ratIcon').style.marginTop = "-55px";
+                document.getElementById('roomDesc').innerText = "Дядюшка Писк довольно отдыхает на новом диване.";
+            } else {
+                document.getElementById('roomIcon').innerText = r.icon;
+                document.getElementById('ratIcon').innerText = r.rat;
+                document.getElementById('ratIcon').style.marginLeft = "50px";
+                document.getElementById('ratIcon').style.marginTop = "-35px";
+                document.getElementById('roomDesc').innerText = r.desc;
+            }
+        } else {
+            document.getElementById('roomIcon').innerText = r.icon;
+            document.getElementById('ratIcon').innerText = r.rat;
+            document.getElementById('roomDesc').innerText = r.desc;
+            document.getElementById('ratIcon').style.marginLeft = "50px";
+            document.getElementById('ratIcon').style.marginTop = "-35px";
+        }
 
-        if(id === 'bedroom' && inventory.pillow) {
+        // Колпак Шефа
+        if (id === 'kitchen' && inventory.hat) {
+            document.getElementById('ratIcon').innerText = "👨‍🍳🐁";
+        }
+
+        // Подушка Сони
+        if (id === 'bedroom' && inventory.pillow) {
             document.getElementById('roomIcon').innerText = "☁️💤";
             document.getElementById('roomDesc').innerText = "Теперь Соня спит на мягкой подушке!";
         }
+
+        document.getElementById('actionBtn').innerText = r.btn;
+        document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
+        document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
 
         const fire = document.getElementById('fireSound');
         (id === 'living') ? fire.play().catch(e=>{}) : fire.pause();
@@ -119,8 +143,8 @@
             document.getElementById('cheese-count').innerText = cheese;
             document.getElementById('eatSound').play().catch(e=>{});
         } else if (currentRoom === 'living') {
-            const tips = ["Всегда держи хвост пистолетом!", "Сыр вкуснее, когда им делишься.", "Береги костер, и он согреет тебя."];
-            alert(rooms.living.name + ": " + tips[Math.floor(Math.random()*tips.length)]);
+            const tips = ["Диван — это лучшее изобретение крыс!", "На мягком думается лучше.", "Жизнь удалась, когда есть где присесть."];
+            alert(rooms.living.name + ": " + (inventory.sofa ? tips[Math.floor(Math.random()*tips.length)] : "Всегда держи хвост пистолетом!"));
         } else if (currentRoom === 'bedroom') {
             alert("Крыса довольно пискнула.");
         }
@@ -131,10 +155,11 @@
             cheese -= price;
             inventory[item] = true;
             document.getElementById('cheese-count').innerText = cheese;
-            const btn = document.getElementById('buy-' + (item === 'rug' ? 'rug' : item === 'hat' ? 'hat' : 'pillow'));
+            const btn = document.getElementById('buy-' + item);
             btn.innerText = "Куплено";
             btn.disabled = true;
             alert("Поздравляю с покупкой!");
+            if (item === 'sofa') changeRoom('shop'); // Обновить вид
         } else if (inventory[item]) {
             alert("У тебя уже это есть!");
         } else {
