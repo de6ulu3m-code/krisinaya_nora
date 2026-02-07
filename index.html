@@ -167,6 +167,48 @@
             alert("Не хватает сыра! Иди на кухню.");
         }
     }
+    function changeRoom(id) {
+    currentRoom = id;
+    const r = rooms[id];
+    const roomIcon = document.getElementById('roomIcon');
+    const ratIcon = document.getElementById('ratIcon');
+    const fire = document.getElementById('fireSound');
+    
+    document.getElementById('rat-name').innerText = r.name;
+    
+    if (id === 'living') {
+        // Звук костра в гостиной играет всегда
+        fire.play().catch(e=>{}); 
+
+        if (inventory.sofa) {
+            // Если диван куплен: показываем И костер, И диван
+            roomIcon.innerHTML = "🔥 <span style='margin-left:10px;'>🛋️</span>";
+            document.getElementById('roomDesc').innerText = "Дядюшка Писк греется у огня, сидя на мягком диване.";
+            
+            // Сажаем крысу прямо на диван (чуть правее костра)
+            ratIcon.style.marginLeft = "80px";
+            ratIcon.style.marginTop = "-55px";
+        } else {
+            // Если дивана нет: только костер
+            roomIcon.innerText = "🔥";
+            document.getElementById('roomDesc').innerText = r.desc;
+            
+            ratIcon.style.marginLeft = "50px";
+            ratIcon.style.marginTop = "-35px";
+        }
+    } else {
+        // В других комнатах звук выключаем
+        fire.pause();
+        roomIcon.innerText = r.icon;
+        ratIcon.style.marginLeft = "50px";
+        ratIcon.style.marginTop = "-35px";
+    }
+
+    // Логика кнопок магазина
+    document.getElementById('actionBtn').innerText = r.btn;
+    document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
+    document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
+    }
 </script>
 </body>
 </html>
