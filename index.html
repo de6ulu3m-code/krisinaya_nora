@@ -2,355 +2,201 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Уютная нора</title>
+    <title>Крысиная Нора</title>
     <style>
-    :root {
-        --brown-dark: #3d2b1f;
-        --brown-light: #5d4037;
-        --gold: #ffcc00;
-    }
+        body {
+            background-color: #2c1e14;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
 
-    body {
-        background-color: #1a120b;
-        color: white;
-        font-family: 'Arial', sans-serif;
-        display: flex;
-        justify-content: center;
-        padding-top: 20px;
-    }
+        /* Те самые круглые кнопки сверху */
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
 
-    .container {
-        width: 350px;
-        text-align: center;
-    }
+        .nav-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #5d4037;
+            background: #3d2b1f;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
 
-    /* Верхнее меню - круглые кнопки */
-    .nav-menu {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
+        .nav-btn:hover { border-color: #ffcc00; }
 
-    .nav-btn {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%; /* Делаем круглыми */
-        border: 2px solid var(--brown-light);
-        background: var(--brown-dark);
-        color: white;
-        font-size: 0.7rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.3s;
-    }
+        /* Окно комнаты */
+        .room-box {
+            width: 300px;
+            height: 200px;
+            background: #3d2b1f;
+            border-radius: 30px;
+            border: 5px solid #5d4037;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-    .nav-btn:hover {
-        border-color: var(--gold);
-        transform: scale(1.1);
-    }
+        #roomIcon { font-size: 70px; }
+        #ratIcon { font-size: 50px; margin-top: 10px; transition: 0.3s; }
 
-    /* Облако описания */
-    .description-cloud {
-        background: white;
-        color: #333;
-        padding: 15px;
-        border-radius: 20px;
-        position: relative;
-        margin: 20px 0;
-        font-size: 0.9rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
+        /* То самое облако описания */
+        .cloud {
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 20px;
+            width: 280px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            font-weight: bold;
+        }
 
-    /* Хвостик облака */
-    .description-cloud::after {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-bottom: 10px solid white;
-    }
+        .cloud::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom: 10px solid white;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+        }
 
-    /* Основные кнопки действий */
-    .btn {
-        background: var(--brown-light);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
-        cursor: pointer;
-        margin: 5px;
-        transition: 0.2s;
-    }
+        /* Кнопки */
+        .btn {
+            background: #5d4037;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
 
-    .btn:hover {
-        background: #795548;
-    }
+        /* Список товаров (простой список) */
+        .shop-list {
+            display: none;
+            text-align: left;
+            width: 300px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
 
-    /* Стили для магазина */
-    .upgrade-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(0,0,0,0.2);
-        padding: 8px 12px;
-        margin: 5px 0;
-        border-radius: 10px;
-    }
+        .item { display: flex; justify-content: space-between; margin: 10px 0; }
     </style>
 </head>
 <body>
 
-<div class="container">
     <div class="nav-menu">
-        <button class="nav-btn" onclick="changeRoom('living')">🏠<br>Уют</button>
+        <button class="nav-btn" onclick="changeRoom('living')">🔥<br>Уют</button>
         <button class="nav-btn" onclick="changeRoom('kitchen')">🍳<br>Еда</button>
         <button class="nav-btn" onclick="changeRoom('bedroom')">💤<br>Сон</button>
-        <button class="nav-btn" onclick="changeRoom('basement')">📦<br>Склад</button>
-        <button class="nav-btn" onclick="changeRoom('shop')" style="border-color: #ffcc00;">💰<br>Лавка</button>
-        <button class="nav-btn" onclick="window.location.href='/ratmetro/'" style="background: #000; color: #ffcc00;">🚇<br>Метро</button>
+        <button class="nav-btn" onclick="changeRoom('basement')">📦<br>Подвал</button>
+        <button class="nav-btn" onclick="changeRoom('shop')">💰<br>Лавка</button>
     </div>
 
-    <div class="main-card">
-        <h2 id="rat-name" style="margin-top: 0; color: #ffcc00; font-size: 1.2rem;">Дядюшка Писк</h2>
-        
-        <div id="room-display" class="room-window">
-            <div id="roomIcon" style="font-size: 60px;">🔥</div>
-            <div id="ratIcon" class="rat-character">🐀</div>
-        </div>
+    <div style="margin-bottom: 15px;">🧀 Сыр: <span id="balance">0</span></div>
 
-        <div class="cloud-inner">
-            <p id="roomDesc" style="margin: 0; font-weight: bold;">Греет лапки у огня.</p>
-        </div>
-
-        <button id="actionBtn" class="action-btn-main" onclick="handleAction()">Послушать совет</button>
-
-        <div id="shop-items" style="display: none; margin-top: 15px;">
-            <div class="upgrade-item"><span>🛋️ Диван (10🧀)</span><button class="buy-small" onclick="buy('sofa', 10)">Купить</button></div>
-            <div class="upgrade-item"><span>👨‍🍳 Колпак (20🧀)</span><button class="buy-small" onclick="buy('hat', 20)">Купить</button></div>
-            <div class="upgrade-item"><span>☁️ Подушка (30🧀)</span><button class="buy-small" onclick="buy('pillow', 30)">Купить</button></div>
-            <div class="upgrade-item"><span>🕯️ Свечи (5🧀)</span><button class="buy-small" onclick="buy('candles', 5)">Купить</button></div>
-            <div class="upgrade-item"><span>🧺 Гамак (15🧀)</span><button class="buy-small" onclick="buy('hammock', 15)">Купить</button></div>
-            <div class="upgrade-item"><span>📻 Радио (50🧀)</span><button class="buy-small" onclick="buy('radio', 50)">Купить</button></div>
-        </div>
+    <div class="room-box">
+        <div id="roomIcon">🔥</div>
+        <div id="ratIcon">🐀</div>
     </div>
 
-    <div style="margin-top: 15px; font-size: 1.1rem;">🧀 Сыр в закромах: <span id="balance">0</span></div>
-</div>
+    <div class="cloud">
+        <p id="roomDesc" style="margin:0;">Греет лапки у огня.</p>
+    </div>
 
-<style>
-    /* Общие настройки */
-    body { background: #1a120b; color: white; font-family: sans-serif; display: flex; justify-content: center; }
-    .container { width: 340px; text-align: center; padding-top: 10px; }
+    <button id="actionBtn" class="btn" onclick="handleAction()">Послушать совет</button>
 
-    /* Навигация */
-    .nav-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
-    .nav-btn { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #5d4037; background: #3d2b1f; color: white; font-size: 0.65rem; cursor: pointer; transition: 0.2s; }
-    .nav-btn:hover { border-color: #ffcc00; transform: scale(1.05); }
+    <div id="shop-items" class="shop-list">
+        <div class="item"><span>🛋️ Диван (10🧀)</span><button onclick="buy('sofa', 10)">Купить</button></div>
+        <div class="item"><span>👨‍🍳 Колпак (20🧀)</span><button onclick="buy('hat', 20)">Купить</button></div>
+        <div class="item"><span>📻 Радио (50🧀)</span><button onclick="buy('radio', 50)">Купить</button></div>
+        </div>
 
-    /* Единая карточка комнаты */
-    .main-card { 
-        background: #3d2b1f; 
-        border: 4px solid #5d4037; 
-        border-radius: 30px; 
-        padding: 20px; 
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
+    <script>
+        let cheeseBalance = 0;
+        let inventory = { sofa: false, hat: false, radio: false };
+        let currentRoom = 'living';
 
-    /* Окно комнаты */
-    .room-window {
-        background: #2b1d12;
-        height: 120px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        border: 2px solid #221a15;
-    }
+        const rooms = {
+            living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Греет лапки у огня.", btn: "Послушать совет" },
+            kitchen: { name: "Шеф Реми", icon: "🍳", rat: "🐀", desc: "Готовит лучший сыр!", btn: "Взять сыр 🧀" },
+            bedroom: { name: "Малыш Соня", icon: "💤", rat: "🐀", desc: "Спит и видит сыр.", btn: "Поправить одеяло" },
+            basement: { name: "Винтик", icon: "📦", rat: "🐀", desc: "Мастерит что-то важное.", btn: "Помочь" },
+            shop: { name: "Торговец Хвост", icon: "💰", rat: "🐹", desc: "Лучшие товары за сыр!", btn: "Посмотреть" }
+        };
 
-    .rat-character {
-        position: absolute;
-        bottom: 10px;
-        left: 45%;
-        font-size: 40px;
-        transition: 0.5s ease;
-    }
+        function changeRoom(id) {
+            currentRoom = id;
+            const r = rooms[id];
+            const fire = document.getElementById('fireSound');
+            
+            document.getElementById('roomIcon').innerText = r.icon;
+            document.getElementById('ratIcon').innerText = r.rat;
+            document.getElementById('roomDesc').innerText = r.desc;
+            document.getElementById('actionBtn').innerText = r.btn;
 
-    /* Стилизация описания внутри карточки */
-    .cloud-inner {
-        background: #fdfdfd;
-        color: #333;
-        margin: 15px 0;
-        padding: 12px;
-        border-radius: 15px;
-        font-size: 0.9rem;
-    }
+            // Логика предметов
+            if (id === 'living' && inventory.sofa) {
+                document.getElementById('roomIcon').innerHTML = "🔥 🛋️";
+                document.getElementById('roomDesc').innerText = "Дядюшка Писк греется на диване.";
+            }
 
-    /* Большая кнопка внутри карточки */
-    .action-btn-main {
-        width: 100%;
-        padding: 15px;
-        border-radius: 15px;
-        border: none;
-        background: #ffcc00;
-        color: #3d2b1f;
-        font-weight: bold;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-    .action-btn-main:hover { background: #e6b800; transform: translateY(-2px); }
-
-    /* Магазин */
-    .upgrade-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin: 5px 0; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; }
-    .buy-small { background: #5d4037; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer; }
-</style>
-
-<audio id="fireSound" loop>
-    <source src="fire.mp3" type="audio/mpeg">
-</audio>
-<audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
-
-<script>
-    let cheeseBalance = 0;
-let currentRoom = 'living';
-// Инвентарь
-let inventory = { 
-    sofa: false, hat: false, pillow: false, 
-    candles: false, hammock: false, radio: false 
-};
-
-const rooms = {
-    living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Греет лапки у огня.", btn: "Послушать совет" },
-    kitchen: { name: "Шеф Реми", icon: "🍳", rat: "🐀", desc: "Готовит лучший сыр в округе!", btn: "Взять сыр 🧀" },
-    bedroom: { name: "Малыш Соня", icon: "💤", rat: "🐀", desc: "Видит сны о гигантской головке сыра.", btn: "Поправить одеяло" },
-    basement: { name: "Винтик", icon: "📦", rat: "🐀", desc: "Мастерит вечный двигатель из пробки.", btn: "Помочь с деталью" },
-    shop: { name: "Торговец Хвост", icon: "💰", rat: "🐹", desc: "Меняю уют на сыр!", btn: "Посмотреть товары" }
-};
-
-// --- СИСТЕМА СОХРАНЕНИЯ ---
-function saveGame() {
-    localStorage.setItem('ratCheese', cheeseBalance);
-    localStorage.setItem('ratInventory', JSON.stringify(inventory));
-}
-
-function loadGame() {
-    const savedCheese = localStorage.getItem('ratCheese');
-    const savedInv = localStorage.getItem('ratInventory');
-    
-    if (savedCheese !== null) {
-        cheeseBalance = parseInt(savedCheese);
-    }
-    if (savedInv !== null) {
-        inventory = JSON.parse(savedInv);
-    }
-    
-    updateDisplay();
-    changeRoom('living');
-}
-
-function updateDisplay() {
-    // Обновляем счетчик сыра везде
-    const balanceElements = document.querySelectorAll('#balance');
-    balanceElements.forEach(el => el.innerText = cheeseBalance);
-    
-    // Обновляем кнопки в магазине
-    if (inventory.sofa && document.getElementById('buy-sofa')) document.getElementById('buy-sofa').innerText = "Куплено";
-    if (inventory.hat && document.getElementById('buy-hat')) document.getElementById('buy-hat').innerText = "Куплено";
-    if (inventory.pillow && document.getElementById('buy-pillow')) document.getElementById('buy-pillow').innerText = "Куплено";
-    if (inventory.candles && document.getElementById('buy-candles')) document.getElementById('buy-candles').innerText = "Куплено";
-    if (inventory.hammock && document.getElementById('buy-hammock')) document.getElementById('buy-hammock').innerText = "Куплено";
-    if (inventory.radio && document.getElementById('buy-radio')) document.getElementById('buy-radio').innerText = "Куплено";
-}
-
-// --- ЛОГИКА КОМНАТ ---
-function changeRoom(id) {
-    currentRoom = id;
-    const r = rooms[id];
-    const roomIcon = document.getElementById('roomIcon');
-    const ratIcon = document.getElementById('ratIcon');
-    const fire = document.getElementById('fireSound');
-    
-    document.getElementById('rat-name').innerText = r.name;
-    document.getElementById('roomDesc').innerText = r.desc;
-    roomIcon.style.filter = "none";
-
-    // Устанавливаем иконку персонажа (все крысы 🐀, торговец хомяк 🐹)
-    ratIcon.innerText = r.rat;
-
-    if (id === 'living') {
-        fire.play().catch(() => {});
-        if (inventory.sofa) {
-            roomIcon.innerHTML = "🔥 <span style='margin-left:15px;'>🛋️</span>";
-            ratIcon.style.marginLeft = "80px";
-        } else {
-            roomIcon.innerText = "🔥";
-            ratIcon.style.marginLeft = "50px";
+            // Управление звуком и отображением магазина
+            if (id === 'living') fire.play().catch(()=>{}); else fire.pause();
+            document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
+            document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
         }
-        if (inventory.candles) roomIcon.style.filter = "drop-shadow(0 0 15px #ffcc00)";
-    } 
-    else if (id === 'bedroom') {
-        fire.pause();
-        roomIcon.innerText = inventory.hammock ? "🧺" : r.icon;
-        if (inventory.pillow) ratIcon.innerText = "☁️🐀";
-    }
-    else if (id === 'kitchen') {
-        fire.pause();
-        roomIcon.innerText = r.icon;
-        if (inventory.hat) ratIcon.innerText = "👨‍🍳🐀";
-    }
-    else if (id === 'basement') {
-        fire.pause();
-        roomIcon.innerHTML = inventory.radio ? "📦 <span style='margin-left:10px;'>📻</span>" : r.icon;
-    }
-    else {
-        fire.pause();
-        roomIcon.innerText = r.icon;
-    }
 
-    document.getElementById('actionBtn').innerText = r.btn;
-    document.getElementById('shop-items').style.display = (id === 'shop') ? 'block' : 'none';
-    document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
-}
+        function handleAction() {
+            if (currentRoom === 'kitchen') {
+                cheeseBalance++;
+                updateDisplay();
+                alert("Ты получил 1 сыр!");
+            } else {
+                alert(rooms[currentRoom].name + " довольно попискивает.");
+            }
+        }
 
-// --- МАГАЗИН И ДЕЙСТВИЯ ---
-function buy(item, price) {
-    if (inventory[item]) return;
-    if (cheeseBalance >= price) {
-        cheeseBalance -= price;
-        inventory[item] = true;
-        saveGame();
-        updateDisplay();
-        changeRoom('shop'); 
-    } else {
-        alert("Маловато сыра! Нужно: " + price + " 🧀");
-    }
-}
+        function buy(item, price) {
+            if (cheeseBalance >= price) {
+                cheeseBalance -= price;
+                inventory[item] = true;
+                updateDisplay();
+                alert("Куплено!");
+                changeRoom('living');
+            } else {
+                alert("Мало сыра!");
+            }
+        }
 
-function handleAction() {
-    if (currentRoom === 'kitchen') {
-        cheeseBalance++; // Прямое начисление
-        saveGame();
-        updateDisplay();
-        alert("Шеф Реми дал тебе кусочек сыра! Теперь у тебя: " + cheeseBalance + " 🧀");
-    } else if (currentRoom === 'living') {
-        alert("Дядюшка Писк: 'Сыр — это хорошо, а теплый сыр — еще лучше!'");
-    } else if (currentRoom === 'basement') {
-        alert("Винтик: 'Не наступи на шестеренки!'");
-    } else if (currentRoom === 'bedroom') {
-        alert("Тссс... Малыш Соня спит.");
-    }
-}
+        function updateDisplay() {
+            document.getElementById('balance').innerText = cheeseBalance;
+            localStorage.setItem('ratCheese', cheeseBalance);
+        }
 
-window.onload = loadGame;
-</script>
+        window.onload = () => {
+            if (localStorage.getItem('ratCheese')) cheeseBalance = parseInt(localStorage.getItem('ratCheese'));
+            updateDisplay();
+        };
+    </script>
+
+    <audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
 </body>
 </html>
