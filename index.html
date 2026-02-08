@@ -109,57 +109,110 @@
 <body>
 
 <div class="container">
-    <h1 id="rat-name">Дядюшка Писк</h1>
-    
-    <div style="font-size: 1.2rem; margin-bottom: 10px;">🧀 Сыр: <span id="balance">0</span></div>
-
-    <div id="room-display" style="background: #3d2b1f; padding: 30px; border-radius: 20px; border: 4px solid #5d4037; position: relative; min-height: 150px;">
-        <div id="roomIcon" style="font-size: 60px; margin-bottom: 10px;">🔥</div>
-        <div id="ratIcon" style="font-size: 40px; position: absolute; bottom: 20px; left: 50px; transition: 0.3s;">🐀</div>
+    <div class="nav-menu">
+        <button class="nav-btn" onclick="changeRoom('living')">🏠<br>Уют</button>
+        <button class="nav-btn" onclick="changeRoom('kitchen')">🍳<br>Еда</button>
+        <button class="nav-btn" onclick="changeRoom('bedroom')">💤<br>Сон</button>
+        <button class="nav-btn" onclick="changeRoom('basement')">📦<br>Склад</button>
+        <button class="nav-btn" onclick="changeRoom('shop')" style="border-color: #ffcc00;">💰<br>Лавка</button>
+        <button class="nav-btn" onclick="window.location.href='/ratmetro/'" style="background: #000; color: #ffcc00;">🚇<br>Метро</button>
     </div>
 
-    <p id="roomDesc">Греет лапки у огня.</p>
+    <div class="main-card">
+        <h2 id="rat-name" style="margin-top: 0; color: #ffcc00; font-size: 1.2rem;">Дядюшка Писк</h2>
+        
+        <div id="room-display" class="room-window">
+            <div id="roomIcon" style="font-size: 60px;">🔥</div>
+            <div id="ratIcon" class="rat-character">🐀</div>
+        </div>
 
-    <button id="actionBtn" class="btn" onclick="handleAction()" style="width: 100%; margin-bottom: 10px;">Послушать совет</button>
+        <div class="cloud-inner">
+            <p id="roomDesc" style="margin: 0; font-weight: bold;">Греет лапки у огня.</p>
+        </div>
 
-    <div id="shop-items" style="display: none; background: #2d1f16; padding: 15px; border-radius: 10px; text-align: left;">
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>🛋️ Диван (10🧀)</span>
-            <button class="btn" id="buy-sofa" onclick="buy('sofa', 10)">Купить</button>
-        </div>
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>👨‍🍳 Колпак (20🧀)</span>
-            <button class="btn" id="buy-hat" onclick="buy('hat', 20)">Купить</button>
-        </div>
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>☁️ Подушка (30🧀)</span>
-            <button class="btn" id="buy-pillow" onclick="buy('pillow', 30)">Купить</button>
-        </div>
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>🕯️ Свечи (5🧀)</span>
-            <button class="btn" id="buy-candles" onclick="buy('candles', 5)">Купить</button>
-        </div>
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>🧺 Гамак (15🧀)</span>
-            <button class="btn" id="buy-hammock" onclick="buy('hammock', 15)">Купить</button>
-        </div>
-        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>📻 Радио (50🧀)</span>
-            <button class="btn" id="buy-radio" onclick="buy('radio', 50)">Купить</button>
+        <button id="actionBtn" class="action-btn-main" onclick="handleAction()">Послушать совет</button>
+
+        <div id="shop-items" style="display: none; margin-top: 15px;">
+            <div class="upgrade-item"><span>🛋️ Диван (10🧀)</span><button class="buy-small" onclick="buy('sofa', 10)">Купить</button></div>
+            <div class="upgrade-item"><span>👨‍🍳 Колпак (20🧀)</span><button class="buy-small" onclick="buy('hat', 20)">Купить</button></div>
+            <div class="upgrade-item"><span>☁️ Подушка (30🧀)</span><button class="buy-small" onclick="buy('pillow', 30)">Купить</button></div>
+            <div class="upgrade-item"><span>🕯️ Свечи (5🧀)</span><button class="buy-small" onclick="buy('candles', 5)">Купить</button></div>
+            <div class="upgrade-item"><span>🧺 Гамак (15🧀)</span><button class="buy-small" onclick="buy('hammock', 15)">Купить</button></div>
+            <div class="upgrade-item"><span>📻 Радио (50🧀)</span><button class="buy-small" onclick="buy('radio', 50)">Купить</button></div>
         </div>
     </div>
 
-    <hr style="border: 1px solid #5d4037; margin: 20px 0;">
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button class="btn" onclick="changeRoom('living')">🏠 Гостиная</button>
-        <button class="btn" onclick="changeRoom('kitchen')">🍳 Кухня</button>
-        <button class="btn" onclick="changeRoom('bedroom')">💤 Спальня</button>
-        <button class="btn" onclick="changeRoom('basement')">📦 Подвал</button>
-        <button class="btn" onclick="changeRoom('shop')" style="grid-column: span 2; background: #5d4037;">💰 Лавка Хомяка</button>
-        <button class="btn" onclick="window.location.href='/ratmetro/'" style="grid-column: span 2; background: #222; color: #ffcc00; border: 1px solid #ffcc00;">🚇 Метро</button>
-    </div>
+    <div style="margin-top: 15px; font-size: 1.1rem;">🧀 Сыр в закромах: <span id="balance">0</span></div>
 </div>
+
+<style>
+    /* Общие настройки */
+    body { background: #1a120b; color: white; font-family: sans-serif; display: flex; justify-content: center; }
+    .container { width: 340px; text-align: center; padding-top: 10px; }
+
+    /* Навигация */
+    .nav-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+    .nav-btn { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #5d4037; background: #3d2b1f; color: white; font-size: 0.65rem; cursor: pointer; transition: 0.2s; }
+    .nav-btn:hover { border-color: #ffcc00; transform: scale(1.05); }
+
+    /* Единая карточка комнаты */
+    .main-card { 
+        background: #3d2b1f; 
+        border: 4px solid #5d4037; 
+        border-radius: 30px; 
+        padding: 20px; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    /* Окно комнаты */
+    .room-window {
+        background: #2b1d12;
+        height: 120px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border: 2px solid #221a15;
+    }
+
+    .rat-character {
+        position: absolute;
+        bottom: 10px;
+        left: 45%;
+        font-size: 40px;
+        transition: 0.5s ease;
+    }
+
+    /* Стилизация описания внутри карточки */
+    .cloud-inner {
+        background: #fdfdfd;
+        color: #333;
+        margin: 15px 0;
+        padding: 12px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Большая кнопка внутри карточки */
+    .action-btn-main {
+        width: 100%;
+        padding: 15px;
+        border-radius: 15px;
+        border: none;
+        background: #ffcc00;
+        color: #3d2b1f;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .action-btn-main:hover { background: #e6b800; transform: translateY(-2px); }
+
+    /* Магазин */
+    .upgrade-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin: 5px 0; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; }
+    .buy-small { background: #5d4037; color: white; border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer; }
+</style>
 
 <audio id="fireSound" loop>
     <source src="fire.mp3" type="audio/mpeg">
