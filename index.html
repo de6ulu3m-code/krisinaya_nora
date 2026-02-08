@@ -38,36 +38,62 @@
 </head>
 <body>
 
-<div class="nav-menu">
-    <button class="nav-btn" onclick="changeRoom('living')">Гостиная</button>
-    <button class="nav-btn" onclick="changeRoom('kitchen')">Кухня</button>
-    <button class="nav-btn" onclick="changeRoom('bedroom')">Спальня</button>
-    <button class="nav-btn" onclick="changeRoom('basement')">📦 Подвал</button>
-    <button class="nav-btn" onclick="changeRoom('shop')">💰 Лавка</button>
-    <button class="nav-btn" onclick="window.location.href='/ratmetro/'" style="border-color: #ffcc00;">🚇 Метро</button>
+<div class="container">
+    <h1 id="rat-name">Дядюшка Писк</h1>
+    
+    <div style="font-size: 1.2rem; margin-bottom: 10px;">🧀 Сыр: <span id="balance">0</span></div>
+
+    <div id="room-display" style="background: #3d2b1f; padding: 30px; border-radius: 20px; border: 4px solid #5d4037; position: relative; min-height: 150px;">
+        <div id="roomIcon" style="font-size: 60px; margin-bottom: 10px;">🔥</div>
+        <div id="ratIcon" style="font-size: 40px; position: absolute; bottom: 20px; left: 50px; transition: 0.3s;">🐀</div>
+    </div>
+
+    <p id="roomDesc">Греет лапки у огня.</p>
+
+    <button id="actionBtn" class="btn" onclick="handleAction()" style="width: 100%; margin-bottom: 10px;">Послушать совет</button>
+
+    <div id="shop-items" style="display: none; background: #2d1f16; padding: 15px; border-radius: 10px; text-align: left;">
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>🛋️ Диван (10🧀)</span>
+            <button class="btn" id="buy-sofa" onclick="buy('sofa', 10)">Купить</button>
+        </div>
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>👨‍🍳 Колпак (20🧀)</span>
+            <button class="btn" id="buy-hat" onclick="buy('hat', 20)">Купить</button>
+        </div>
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>☁️ Подушка (30🧀)</span>
+            <button class="btn" id="buy-pillow" onclick="buy('pillow', 30)">Купить</button>
+        </div>
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>🕯️ Свечи (5🧀)</span>
+            <button class="btn" id="buy-candles" onclick="buy('candles', 5)">Купить</button>
+        </div>
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>🧺 Гамак (15🧀)</span>
+            <button class="btn" id="buy-hammock" onclick="buy('hammock', 15)">Купить</button>
+        </div>
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>📻 Радио (50🧀)</span>
+            <button class="btn" id="buy-radio" onclick="buy('radio', 50)">Купить</button>
+        </div>
+    </div>
+
+    <hr style="border: 1px solid #5d4037; margin: 20px 0;">
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn" onclick="changeRoom('living')">🏠 Гостиная</button>
+        <button class="btn" onclick="changeRoom('kitchen')">🍳 Кухня</button>
+        <button class="btn" onclick="changeRoom('bedroom')">💤 Спальня</button>
+        <button class="btn" onclick="changeRoom('basement')">📦 Подвал</button>
+        <button class="btn" onclick="changeRoom('shop')" style="grid-column: span 2; background: #5d4037;">💰 Лавка Хомяка</button>
+        <button class="btn" onclick="window.location.href='/ratmetro/'" style="grid-column: span 2; background: #222; color: #ffcc00; border: 1px solid #ffcc00;">🚇 Метро</button>
+    </div>
 </div>
 
-<div class="nora-container" id="roomContainer">
-    <div id="stock-display">Сыр: <span id="cheese-count">0</span> 🧀</div>
-    <div id="rat-name" class="rat-name">Дядюшка Писк</div>
-    
-    <div class="room-icon" id="roomIcon">🔥</div>
-    <div class="rat-resident" id="ratIcon">🐀</div>
-
-    <p id="roomDesc">Здесь тепло и пахнет деревом.</p>
-    
-    <div id="shop-items" style="display: none; text-align: left;">
-    <div class="upgrade-item"><span>🛋️ Диван (10🧀)</span><button id="buy-sofa" onclick="buy('sofa', 10)">Купить</button></div>
-    <div class="upgrade-item"><span>👨‍🍳 Колпак (20🧀)</span><button id="buy-hat" onclick="buy('hat', 20)">Купить</button></div>
-    <div class="upgrade-item"><span>☁️ Подушка (30🧀)</span><button id="buy-pillow" onclick="buy('pillow', 30)">Купить</button></div>
-    <div class="upgrade-item"><span>🕯️ Свечи (5🧀)</span><button id="buy-candles" onclick="buy('candles', 5)">Купить</button></div>
-    <div class="upgrade-item"><span>🧺 Гамак (15🧀)</span><button id="buy-hammock" onclick="buy('hammock', 15)">Купить</button></div>
-    <div class="upgrade-item"><span>📻 Радио (50🧀)</span><button id="buy-radio" onclick="buy('radio', 50)">Купить</button></div>
-    </div>
-    
-<a href="https://de6ulu3m-code.github.io/ratpage/" style="margin-top: 20px; color: #8b4513; text-decoration: none;">← На поверхность</a>
-
-<audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
+<audio id="fireSound" loop>
+    <source src="fire.mp3" type="audio/mpeg">
+</audio>
 <audio id="eatSound"><source src="eat.mp3" type="audio/mpeg"></audio>
 
 <script>
