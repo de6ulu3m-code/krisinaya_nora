@@ -122,4 +122,111 @@
         <button class="nav-btn" onclick="changeRoom('kitchen')">Кухня</button>
         <button class="nav-btn" onclick="changeRoom('bedroom')">Спальня</button>
         <button class="nav-btn" onclick="changeRoom('basement')">Подвал</button>
-        <button class="nav-
+        <button class="nav-btn" onclick="changeRoom('shop')">💰 Лавка</button>
+    </div>
+
+    <div class="main-card">
+        <div class="cheese-count">Сыр: <span id="balance">0</span> 🧀</div>
+        <div id="rat-name" class="rat-name">Дядюшка Писк</div>
+
+        <div class="room-view">
+            <div id="roomIcon">🔥</div>
+            <div id="ratIcon">🐀</div>
+        </div>
+
+        <div id="roomDesc" class="description">Здесь тепло и пахнет деревом.</div>
+
+        <button id="actionBtn" class="action-btn" onclick="handleAction()">Погреться</button>
+
+        <div id="shop-list">
+            <div class="shop-item"><span>🛋️ Диван (10🧀)</span> <button class="buy-btn" onclick="buy('sofa', 10)">Купить</button></div>
+            <div class="shop-item"><span>📻 Радио (50🧀)</span> <button class="buy-btn" onclick="buy('radio', 50)">Купить</button></div>
+            <div class="shop-item"><span>🧺 Гамак (15🧀)</span> <button class="buy-btn" onclick="buy('hammock', 15)">Купить</button></div>
+        </div>
+    </div>
+
+    <a href="/rattown/" class="footer-link">← На поверхность</a>
+
+    <audio id="fireSound" loop><source src="fire.mp3" type="audio/mpeg"></audio>
+
+    <script>
+        let cheeseBalance = 0;
+        let inventory = { sofa: false, radio: false, hammock: false };
+        let currentRoom = 'living';
+
+        const rooms = {
+            living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Здесь тепло и пахнет деревом.", btn: "Погреться" },
+            kitchen: { name: "Шеф Реми", icon: "🍳", rat: "🐀", desc: "Пахнет свежим сыром и специями.", btn: "Взять кусочек" },
+            bedroom: { name: "Малыш Соня", icon: "💤", rat: "🐀", desc: "Тихо... Крысы видят сны.", btn: "Укрыть" },
+            basement: { name: "Винтик", icon: "📦", rat: "🐀", desc: "Склад забытых вещей и шестерёнок.", btn: "Помочь" },
+            shop: { name: "Торговец Хвост", icon: "🐹", rat: "", desc: "У меня есть всё для уюта!", btn: "" }
+        };
+
+        function changeRoom(id) {
+            currentRoom = id;
+            const r = rooms[id];
+            const fire = document.getElementById('fireSound');
+            
+            document.getElementById('rat-name').innerText = r.name;
+            document.getElementById('roomIcon').innerText = r.icon;
+            document.getElementById('ratIcon').innerText = r.rat;
+            document.getElementById('roomDesc').innerText = r.desc;
+            document.getElementById('actionBtn').innerText = r.btn;
+
+            // Спец-эффекты предметов
+            if (id === 'living' && inventory.sofa) {
+                document.getElementById('roomIcon').innerHTML = "🔥 <span style='margin-left:10px;'>🛋️</span>";
+                document.getElementById('roomDesc').innerText = "Дядюшка Писк довольно сидит на диване.";
+            }
+            if (id === 'bedroom' && inventory.hammock) {
+                document.getElementById('roomIcon').innerText = "🧺";
+            }
+            if (id === 'basement' && inventory.radio) {
+                document.getElementById('roomIcon').innerHTML = "📦 <span style='margin-left:10px;'>📻</span>";
+            }
+
+            // Управление звуком и магазином
+            if (id === 'living') fire.play().catch(()=>{}); else fire.pause();
+            
+            document.getElementById('shop-list').style.display = (id === 'shop') ? 'block' : 'none';
+            document.getElementById('actionBtn').style.display = (id === 'shop') ? 'none' : 'block';
+        }
+
+        function handleAction() {
+            if (currentRoom === 'kitchen') {
+                cheeseBalance++;
+                updateDisplay();
+                alert("Реми угостил тебя сыром!");
+            } else {
+                alert(rooms[currentRoom].name + " благодарит тебя.");
+            }
+        }
+
+        function buy(item, price) {
+            if (inventory[item]) { alert("Уже куплено!"); return; }
+            if (cheeseBalance >= price) {
+                cheeseBalance -= price;
+                inventory[item] = true;
+                updateDisplay();
+                alert("Ура! Нора стала уютнее.");
+                changeRoom('living');
+            } else {
+                alert("Мало сыра! Нужно " + price);
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('balance').innerText = cheeseBalance;
+            localStorage.setItem('ratCheese', cheeseBalance);
+            localStorage.setItem('ratInv', JSON.stringify(inventory));
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('ratCheese')) cheeseBalance = parseInt(localStorage.getItem('ratCheese'));
+            if (localStorage.getItem('ratInv')) inventory = JSON.parse(localStorage.getItem('ratInv'));
+            updateDisplay();
+            changeRoom('living');
+        };
+    </script>
+</body>
+</html>
