@@ -49,7 +49,10 @@
 </div>
 
 <div class="nora-container" id="roomContainer">
-    <div id="stock-display">Сыр: <span id="cheese-count">0</span> 🧀</div>
+    <div id="stock-display">
+    Сыр: <span id="cheese-count">0</span> 🧀 | 
+    Репутация: <span id="rep-count">0</span> ⭐
+    </div>
     <div id="rat-name" class="rat-name">Дядюшка Писк</div>
     
     <div class="room-icon" id="roomIcon">🔥</div>
@@ -63,6 +66,11 @@
         <div class="upgrade-item"><span>🧺 Гамак (15🧀)</span><button id="buy-hammock" onclick="buy('hammock', 15)">Купить</button></div>
         <div class="upgrade-item"><span>📻 Радио (50🧀)</span><button id="buy-radio" onclick="buy('radio', 50)">Купить</button></div>
         <div class="upgrade-item"><span>🕯️ Свечи (5🧀)</span><button id="buy-candles" onclick="buy('candles', 5)">Купить</button></div>
+        <div style="margin-top: 15px; border-top: 1px solid #8b4513; padding-top: 10px;">
+    <p style="font-size: 0.8rem; color: #ffcc00;">Благотворительность:</p>
+    <button class="nav-btn" style="width: 100%; height: auto; padding: 10px;" onclick="giveAwayItems()">🎁 Раздать вещи соседям</button>
+    <p style="font-size: 0.7rem;">(+2 репутации за каждую вещь)</p>
+        </div>
     </div>
 
     <button class="btn-action" id="actionBtn" onclick="doAction()">Погреться</button>
@@ -75,6 +83,7 @@
 <script>
     let cheese = 0;
     let inventory = { sofa: false, hat: false, radio: false, hammock: false, candles: false };
+    let reputation = 0;
 
     const rooms = {
         living: { name: "Дядюшка Писк", icon: "🔥", rat: "🐀", desc: "Здесь тепло и пахнет деревом.", btn: "Послушать совет" },
@@ -104,11 +113,19 @@
         ratIcon.style.marginLeft = "50px";
         ratIcon.style.marginTop = "-35px";
 
-        if (id === 'living' && inventory.sofa) {
-            roomIcon.innerText = "🛋️";
-            ratIcon.style.marginLeft = "0px";
-            ratIcon.style.marginTop = "-55px";
-            document.getElementById('roomDesc').innerText = "Дядюшка Писк довольно отдыхает на новом диване.";
+        if (id === 'living') {
+    if (inventory.sofa) {
+        // Огонь И Диван вместе
+        roomIcon.innerHTML = "🔥 <span style='margin-left:10px;'>🛋️</span>";
+        ratIcon.style.marginLeft = "80px"; // Подвинем крысу на диван
+        ratIcon.style.marginTop = "-55px";
+        document.getElementById('roomDesc').innerText = "Дядюшка Писк греется у огня, сидя на новом диване.";
+    } else {
+        roomIcon.innerText = "🔥";
+        ratIcon.style.marginLeft = "50px";
+        ratIcon.style.marginTop = "-35px";
+        document.getElementById('roomDesc').innerText = r.desc;
+    }
         }
 
         if (id === 'kitchen' && inventory.hat) ratIcon.innerText = "👨‍🍳🐀";
@@ -162,10 +179,12 @@
     function saveGame() {
         localStorage.setItem('ratCheese', cheese);
         localStorage.setItem('ratInventory', JSON.stringify(inventory));
+        localStorage.setItem('ratRep', reputation);
     }
 
     function updateDisplay() {
         document.getElementById('cheese-count').innerText = cheese;
+        document.getElementById('rep-count').innerText = reputation;
         // Обновляем кнопки магазина
         for (let item in inventory) {
             const btn = document.getElementById('buy-' + item);
@@ -176,12 +195,54 @@
         }
     }
 
-    window.onload = () => {
-        if (localStorage.getItem('ratCheese')) cheese = parseInt(localStorage.getItem('ratCheese'));
-        if (localStorage.getItem('ratInventory')) inventory = JSON.parse(localStorage.getItem('ratInventory'));
+    function giveAwayItems() {
+    let itemsToGive = 0;
+    
+    // Считаем, сколько вещей куплено
+    for (let key in inventory) {
+        if (inventory[key] === true) {
+            itemsToGive++;
+            inventory[key] = false; // Забираем вещь
+        }
+    }
+
+    if (itemsToGive > 0) {
+        let earnedRep = itemsToGive * 2;
+        reputation += earnedRep;
+        saveGame();
         updateDisplay();
-        changeRoom('living');
-    };
+        alert("Вы раздали вещи нуждающимся крысам! Ваша репутация выросла на " + earnedRep + "!");
+        changeRoom('shop'); // Обновляем экран
+    } else {
+        alert("У вас пока нет вещей, которые можно было бы отдать.");
+    }
+    }
+    
+    window.onload = () => {
+    // 1. Загружаем Сыр
+    const savedCheese = localStorage.getItem('ratCheese');
+    if (savedCheese !== null) {
+        cheese = parseInt(savedCheese);
+    }
+    
+    // 2. Загружаем Репутацию (общую с городом)
+    const savedRep = localStorage.getItem('ratRep');
+    if (savedRep !== null) {
+        reputation = parseInt(savedRep);
+    }
+    
+    // 3. Загружаем Инвентарь
+    const savedInv = localStorage.getItem('ratInventory');
+    if (savedInv !== null) {
+        inventory = JSON.parse(savedInv);
+    }
+    
+    // 4. Отрисовываем всё на экране
+    updateDisplay();
+    
+    // 5. Запускаем первую комнату
+    changeRoom('living');
+};
 </script>
 </body>
 </html>
