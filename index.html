@@ -5,35 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Уютная нора</title>
     <style>
-        :root { --bg-color: #1a120b; --text-color: #f3e5ab; }
-        body {
-            background-color: var(--bg-color); color: var(--text-color);
-            font-family: 'Segoe UI', serif; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; min-height: 100vh; margin: 0; transition: 0.5s;
-        }
-        .nav-menu { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-        .nav-btn {
-            background: #4a3728; color: #f3e5ab; border: 1px solid #8b4513;
-            padding: 8px 12px; border-radius: 10px; cursor: pointer;
-        }
-        .nora-container {
-            background: radial-gradient(circle, #3d2b1f 0%, #1a120b 100%);
-            padding: 30px; text-align: center; border-radius: 40px;
-            border: 2px solid #4a3728; box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            max-width: 320px; width: 90%; position: relative;
-        }
-        .rat-name { font-weight: bold; color: #ffcc00; margin-bottom: 5px; font-size: 1.2rem; }
-        .room-icon { font-size: 70px; margin: 10px 0; display: block; }
-        .rat-resident { font-size: 45px; margin-top: -35px; margin-left: 50px; transition: 0.3s; }
-        .btn-action {
-            background: #8b4513; color: #fff; border: none;
-            padding: 12px 20px; border-radius: 20px; cursor: pointer; margin-top: 15px; width: 100%;
-        }
-        .upgrade-item {
-            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;
-            margin-top: 10px; display: flex; justify-content: space-between; align-items: center;
-        }
-        #stock-display { color: #ffcc00; font-size: 1.2rem; margin-bottom: 10px; }
+    :root {
+        --brown-dark: #3d2b1f;
+        --brown-light: #5d4037;
+        --gold: #ffcc00;
+    }
+
+    body {
+        background-color: #1a120b;
+        color: white;
+        font-family: 'Arial', sans-serif;
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+    }
+
+    .container {
+        width: 350px;
+        text-align: center;
+    }
+
+    /* Верхнее меню - круглые кнопки */
+    .nav-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .nav-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%; /* Делаем круглыми */
+        border: 2px solid var(--brown-light);
+        background: var(--brown-dark);
+        color: white;
+        font-size: 0.7rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+
+    .nav-btn:hover {
+        border-color: var(--gold);
+        transform: scale(1.1);
+    }
+
+    /* Облако описания */
+    .description-cloud {
+        background: white;
+        color: #333;
+        padding: 15px;
+        border-radius: 20px;
+        position: relative;
+        margin: 20px 0;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Хвостик облака */
+    .description-cloud::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid white;
+    }
+
+    /* Основные кнопки действий */
+    .btn {
+        background: var(--brown-light);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin: 5px;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        background: #795548;
+    }
+
+    /* Стили для магазина */
+    .upgrade-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0,0,0,0.2);
+        padding: 8px 12px;
+        margin: 5px 0;
+        border-radius: 10px;
+    }
     </style>
 </head>
 <body>
