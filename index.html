@@ -183,16 +183,27 @@
     }
 
     function updateDisplay() {
-        document.getElementById('cheese-count').innerText = cheese;
+    document.getElementById('cheese-count').innerText = cheese;
+    if (document.getElementById('rep-count')) {
         document.getElementById('rep-count').innerText = reputation;
-        // Обновляем кнопки магазина
-        for (let item in inventory) {
-            const btn = document.getElementById('buy-' + item);
-            if (btn && inventory[item]) {
+    }
+
+    // Обновляем кнопки всех товаров
+    const items = ['sofa', 'hat', 'pillow', 'hammock', 'radio', 'candles'];
+    items.forEach(item => {
+        const btn = document.getElementById('buy-' + item);
+        if (btn) {
+            if (inventory[item]) {
                 btn.innerText = "Куплено";
                 btn.disabled = true;
+                btn.style.opacity = "0.5"; // Делаем бледной
+            } else {
+                btn.innerText = "Купить";
+                btn.disabled = false;
+                btn.style.opacity = "1";   // Возвращаем яркость
             }
         }
+    });
     }
 
     function giveAwayItems() {
